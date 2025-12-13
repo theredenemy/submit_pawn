@@ -5,22 +5,22 @@
   </p>
   <p style="margin-bottom: 0.5ex;">
     <img
-        src="https://img.shields.io/github/downloads//submit_pawn/total"
+        src="https://img.shields.io/github/downloads/theredenemy/submit_pawn/total"
     />
     <img
-        src="https://img.shields.io/github/last-commit//submit_pawn"
+        src="https://img.shields.io/github/last-commit/theredenemy/submit_pawn"
     />
     <img
-        src="https://img.shields.io/github/issues//submit_pawn"
+        src="https://img.shields.io/github/issues/theredenemy/submit_pawn"
     />
     <img
-        src="https://img.shields.io/github/issues-closed//submit_pawn"
+        src="https://img.shields.io/github/issues-closed/theredenemy/submit_pawn"
     />
     <img
-        src="https://img.shields.io/github/repo-size//submit_pawn"
+        src="https://img.shields.io/github/repo-size/theredenemy/submit_pawn"
     />
     <img
-        src="https://img.shields.io/github/workflow/status//submit_pawn/Compile%20and%20release"
+        src="https://img.shields.io/github/workflow/status/theredenemy/submit_pawn/Compile%20and%20release"
     />
   </p>
 </div>
