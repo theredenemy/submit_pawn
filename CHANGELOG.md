@@ -1,7 +1,7 @@
 ## Release Notes
 
-## [1.0.0]
+## [1.0.1]
 
 
-First Release
+Renamed convarstring to triggername
 

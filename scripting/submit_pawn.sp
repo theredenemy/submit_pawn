@@ -10,7 +10,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.0.0",
+	version = "1.0.1",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -66,7 +66,7 @@ public Action pawn_submit_cmd(int args)
 	char arg[256];
     char full[256];
 	char cmd[256];
-	char convarstring[256];
+	char triggername[256];
 	int cmd_len;
 	if (args < 1)
 	{
@@ -91,8 +91,8 @@ public Action pawn_submit_cmd(int args)
 		StrCat(cmd, sizeof(cmd), arg);
 	}
 	ServerCommand("%s", cmd);
-	g_triggername.GetString(convarstring, sizeof(convarstring));
-	SendData(g_playername, convarstring);
+	g_triggername.GetString(triggername, sizeof(triggername));
+	SendData(g_playername, triggername);
 
 	return Plugin_Handled;
 }
