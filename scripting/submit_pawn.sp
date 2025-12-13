@@ -17,6 +17,7 @@ public Plugin myinfo =
 public void clearVars()
 {
 	g_playername = "\0";
+	SetConVarString(g_triggername, "\0");
 	PrintToServer("Vars Cleared");
 }
 
@@ -29,6 +30,7 @@ public void SendData(const char[] player, const char[] trigger)
 public void OnPluginStart()
 {
 	g_triggername = CreateConVar("pawn_trigger", "\0");
+	HookEvent("teamplay_round_start", Event_RoundStart, EventHookMode_Post);
 	RegServerCmd("pawn_submit", pawn_submit_cmd);
 	PrintToServer("Submit_Pawn Has Loaded");
 }
@@ -76,6 +78,7 @@ public Action pawn_submit_cmd(int args)
 	{
 		
 		GetCmdArg(i, arg, sizeof(arg));
+		cmd_len = strlen(cmd);
 		if (cmd_len > 0)
 		{
 			StrCat(cmd, sizeof(cmd), " ");
