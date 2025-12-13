@@ -83,13 +83,12 @@ public Action pawn_submit_cmd(int args)
 		{
 			StrCat(cmd, sizeof(cmd), " ");
 		}
-		if (StrEqual(arg, "(name)"))
-		{
-			ReplaceString(arg, sizeof(arg), "(name)", g_playername);
-		}
+		
+		
+		ReplaceString(arg, sizeof(arg), "(name)", g_playername);
+		
 
 		StrCat(cmd, sizeof(cmd), arg);
-
 	}
 	ServerCommand("%s", cmd);
 	g_triggername.GetString(convarstring, sizeof(convarstring));
