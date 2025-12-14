@@ -1,7 +1,7 @@
 ## Release Notes
 
-## [1.0.2]
+## [1.1.0]
 
 
-Added (steamid) for pawn_submit.
+Added autokick
 
