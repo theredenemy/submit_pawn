@@ -14,7 +14,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.1.1",
+	version = "1.2.0",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -25,10 +25,10 @@ void clearVars()
 	PrintToServer("Vars Cleared");
 }
 
-public void SendData(const char[] player, const char[] trigger)
+public void SendData(const char[] player, const char[] trigger, const char[] date)
 {
 	// PlaceHolder code
-	PrintHintTextToAll("Player : %s Trigger : %s", player, trigger);
+	PrintHintTextToAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
 }
 
 void makeConfig()
@@ -40,18 +40,20 @@ void makeConfig()
 		PrintToServer(path);
 		KeyValues kv = new KeyValues("Player_Pawn");
 		kv.SetString("playername", "SERVICE MANAGER");
+		kv.SetString("date", "DECEMBER 31TH");
 		kv.Rewind();
 		kv.ExportToFile(path);
 		delete kv;
 	}
 }
 
-public void set_pawn(const char[] player)
+public void set_pawn(const char[] player, const char[] date)
 {
 	char path[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
 	KeyValues kv = new KeyValues("Player_Pawn");
 	kv.SetString("playername", player);
+	kv.SetString("date", date);
 	kv.Rewind();
 	kv.ExportToFile(path);
 	delete kv;
@@ -65,6 +67,7 @@ public void OnPluginStart()
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 	RegServerCmd("pawn_submit", pawn_submit_cmd);
 	RegServerCmd("pawn_check", pawn_check_cmd);
+	RegServerCmd("vul_text", display_vul_text_cmd);
 	makeConfig();
 	PrintToServer("Submit_Pawn Has Loaded");
 }
@@ -105,6 +108,8 @@ public Action pawn_submit_cmd(int args)
     char full[256];
 	char cmd[256];
 	char triggername[256];
+	char date[64];
+	int timestamp = GetTime();
 	int cmd_len;
 	if (args < 1)
 	{
@@ -131,9 +136,9 @@ public Action pawn_submit_cmd(int args)
 	}
 	ServerCommand("%s", cmd);
 	g_triggername.GetString(triggername, sizeof(triggername));
-	
-	set_pawn(g_playername);
-	SendData(g_playername, triggername);
+	FormatTime(date, sizeof(date), "%B %dTH", timestamp);
+	set_pawn(g_playername, date);
+	SendData(g_playername, triggername, date);
 
 	return Plugin_Handled;
 }
@@ -164,13 +169,13 @@ public Action pawn_check_cmd(int args)
 		kv.GetString(NULL_STRING, pawn_name, sizeof(pawn_name));
 		delete kv;
 	}
-	PrintToServer(pawn_name);
+	// PrintToServer(pawn_name);
 	for (int i = 1; i <= MaxClients; i++)
 	{
 		if (IsClientInGame(i))
 		{
 			GetClientName(i, playername, sizeof(playername));
-			PrintToServer(playername);
+			// PrintToServer(playername);
 			if (StrEqual(playername, pawn_name))
 			{
 				KickClient(i, reason);
@@ -178,5 +183,51 @@ public Action pawn_check_cmd(int args)
 		}
 	}
 	return Plugin_Handled;
+
+}
+
+public Action display_vul_text_cmd(int args)
+{
+	char path[PLATFORM_MAX_PATH];
+	char pawn_name[MAX_NAME_LENGTH];
+	char date[64];
+
+	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
+	KeyValues kv = new KeyValues("Player_Pawn");
+
+	if (!kv.ImportFromFile(path))
+	{
+		PrintToServer("NO FILE");
+		delete kv;
+		return Plugin_Handled;
+	}
+
+	if (kv.JumpToKey("playername", false))
+	{
+		kv.GetString(NULL_STRING, pawn_name, sizeof(pawn_name));
+		delete kv;
+	}
+	KeyValues kv2 = new KeyValues("Player_Pawn");
+	if (!kv2.ImportFromFile(path))
+	{
+		PrintToServer("NO FILE");
+		delete kv;
+		return Plugin_Handled;
+	}
+
+	if (kv2.JumpToKey("date", false))
+	{
+		kv2.GetString(NULL_STRING, date, sizeof(date));
+		delete kv2;
+	}
+	else
+	{
+		delete kv2;
+		date = "DECEMBER 31TH";
+	}
+
+	PrintCenterTextAll("ADMIN: I AM %s. I DIED ON %s 2001 AND THEN RESPAWN IN THE MACHINE", pawn_name, date);
+	return Plugin_Handled;
+
 
 }

@@ -1,7 +1,8 @@
 ## Release Notes
 
-## [1.1.1]
+## [1.2.0]
 
 
-Added autokick on player spawn
+Added vul_text
+Removed Debug Prints
 
