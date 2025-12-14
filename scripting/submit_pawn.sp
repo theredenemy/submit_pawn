@@ -14,7 +14,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.1.0",
+	version = "1.1.1",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -62,6 +62,7 @@ public void OnPluginStart()
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
 	HookEvent("teamplay_round_start", Event_RoundStart, EventHookMode_Post);
+	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 	RegServerCmd("pawn_submit", pawn_submit_cmd);
 	RegServerCmd("pawn_check", pawn_check_cmd);
 	makeConfig();
@@ -93,7 +94,11 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 	clearVars();
 	return Plugin_Continue;
 }
-
+public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+{
+	ServerCommand("pawn_check");
+	return Plugin_Continue;
+}
 public Action pawn_submit_cmd(int args)
 {
 	char arg[256];

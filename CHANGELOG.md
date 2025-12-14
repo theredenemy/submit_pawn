@@ -1,7 +1,7 @@
 ## Release Notes
 
-## [1.1.0]
+## [1.1.1]
 
 
-Added autokick
+Added autokick on player spawn
 
