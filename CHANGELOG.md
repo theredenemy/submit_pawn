@@ -1,8 +1,9 @@
 ## Release Notes
 
-## [1.2.0]
+## [1.2.1]
 
 
-Added vul_text
-Removed Debug Prints
+Added year to vul_text
+Made Text Uppercase
+Made autokick not kick SourceTV and only kick when the player is alive
 

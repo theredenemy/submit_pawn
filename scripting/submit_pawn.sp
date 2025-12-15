@@ -14,7 +14,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.2.0",
+	version = "1.2.1",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -40,7 +40,7 @@ void makeConfig()
 		PrintToServer(path);
 		KeyValues kv = new KeyValues("Player_Pawn");
 		kv.SetString("playername", "SERVICE MANAGER");
-		kv.SetString("date", "DECEMBER 31TH");
+		kv.SetString("date", "DECEMBER 31TH 2099");
 		kv.Rewind();
 		kv.ExportToFile(path);
 		delete kv;
@@ -136,7 +136,7 @@ public Action pawn_submit_cmd(int args)
 	}
 	ServerCommand("%s", cmd);
 	g_triggername.GetString(triggername, sizeof(triggername));
-	FormatTime(date, sizeof(date), "%B %dTH", timestamp);
+	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	set_pawn(g_playername, date);
 	SendData(g_playername, triggername, date);
 
@@ -172,7 +172,7 @@ public Action pawn_check_cmd(int args)
 	// PrintToServer(pawn_name);
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		if (IsClientInGame(i))
+		if (IsClientInGame(i) && !IsClientSourceTV(i) && IsPlayerAlive(i))
 		{
 			GetClientName(i, playername, sizeof(playername));
 			// PrintToServer(playername);
@@ -223,10 +223,17 @@ public Action display_vul_text_cmd(int args)
 	else
 	{
 		delete kv2;
-		date = "DECEMBER 31TH";
+		date = "DECEMBER 31TH 2099";
 	}
-
-	PrintCenterTextAll("ADMIN: I AM %s. I DIED ON %s 2001 AND THEN RESPAWN IN THE MACHINE", pawn_name, date);
+	for (int i = 0; i < strlen(pawn_name); i++)
+	{
+		pawn_name[i] = CharToUpper(pawn_name[i]);
+	}
+	for (int i = 0; i < strlen(date); i++)
+	{
+		date[i] = CharToUpper(date[i]);
+	}
+	PrintCenterTextAll("ADMIN: I AM %s. I DIED ON %s AND THEN RESPAWN IN THE MACHINE", pawn_name, date);
 	return Plugin_Handled;
 
 
