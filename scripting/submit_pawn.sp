@@ -14,7 +14,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.2.1",
+	version = "1.2.2",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -146,6 +146,7 @@ public Action pawn_check_cmd(int args)
 {
 	char playername[MAX_NAME_LENGTH];
 	char path[PLATFORM_MAX_PATH];
+	char mapname[128];
 	char reason[256] = "YOU ARE IN THE MACHINE NOW";
 	int autokick = GetConVarInt(g_autokick);
 	char pawn_name[MAX_NAME_LENGTH];
@@ -154,6 +155,7 @@ public Action pawn_check_cmd(int args)
 		PrintToServer("autokick off");
 		return Plugin_Handled;
 	}
+	GetCurrentMap(mapname, sizeof(mapname));
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
 	KeyValues kv = new KeyValues("Player_Pawn");
 
@@ -168,6 +170,21 @@ public Action pawn_check_cmd(int args)
 	{
 		kv.GetString(NULL_STRING, pawn_name, sizeof(pawn_name));
 		delete kv;
+	}
+	else
+	{
+		if (!StrEqual(mapname, "submit_pawn"))
+		{
+			if (IsMapValid("submit_pawn"))
+			{
+				ForceChangeLevel("submit_pawn", "NO PLAYER PAWN");
+				return Plugin_Handled;
+			}
+			else
+			{
+				return Plugin_Handled;
+			}
+		}
 	}
 	// PrintToServer(pawn_name);
 	for (int i = 1; i <= MaxClients; i++)
@@ -206,6 +223,11 @@ public Action display_vul_text_cmd(int args)
 	{
 		kv.GetString(NULL_STRING, pawn_name, sizeof(pawn_name));
 		delete kv;
+	}
+	else
+	{
+		delete kv;
+		pawn_name = "MACHINE";
 	}
 	KeyValues kv2 = new KeyValues("Player_Pawn");
 	if (!kv2.ImportFromFile(path))
