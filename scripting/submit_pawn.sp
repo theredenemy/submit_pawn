@@ -4,6 +4,7 @@
 #pragma newdecls required
 #pragma semicolon 1
 #define PLAYER_PAWN_FILE "player_pawn.txt"
+#define ORDINANCE_SERVER "127.0.0.1:5000"
 char g_playername[MAX_NAME_LENGTH];
 char g_playersteamid[256];
 
@@ -25,9 +26,11 @@ void clearVars()
 	PrintToServer("Vars Cleared");
 }
 
-public void SendData(const char[] player, const char[] trigger, const char[] date)
+public void SendData(const char[] player, const char[] trigger, int timestamp)
 {
 	// PlaceHolder code
+	char date[256];
+	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	PrintHintTextToAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
 }
 
@@ -138,7 +141,7 @@ public Action pawn_submit_cmd(int args)
 	g_triggername.GetString(triggername, sizeof(triggername));
 	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	set_pawn(g_playername, date);
-	SendData(g_playername, triggername, date);
+	SendData(g_playername, triggername, timestamp);
 
 	return Plugin_Handled;
 }
