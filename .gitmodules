@@ -1,0 +1,3 @@
+[submodule "scripting/include/SteamWorks"]
+	path = scripting/include/SteamWorks
+	url = https://github.com/KyleSanderson/SteamWorks.git
