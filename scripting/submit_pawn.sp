@@ -1,6 +1,7 @@
 #include <sdkhooks>
 #include <sdktools>
 #include <sourcemod>
+#include <include\SteamWorks\Pawn\includes\SteamWorks.inc>
 #pragma newdecls required
 #pragma semicolon 1
 #define PLAYER_PAWN_FILE "player_pawn.txt"
