@@ -1,7 +1,8 @@
 #include <sdkhooks>
 #include <sdktools>
 #include <sourcemod>
-#include <include\SteamWorks\Pawn\includes\SteamWorks.inc>
+#include <SteamWorks>
+#include <json>
 #pragma newdecls required
 #pragma semicolon 1
 #define PLAYER_PAWN_FILE "player_pawn.txt"
@@ -16,7 +17,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.2.2",
+	version = "1.3.0",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -29,10 +30,22 @@ void clearVars()
 
 public void SendData(const char[] player, const char[] trigger, int timestamp)
 {
-	// PlaceHolder code
 	char date[256];
+	char output[1024];
+	char url[256];
+	JSON_Object obj = new JSON_Object();
 	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	PrintHintTextToAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
+	obj.SetString("player", player);
+	obj.SetInt("timestamp", timestamp);
+	obj.SetString("trigger", trigger);
+	obj.Encode(output, sizeof(output));
+	Format(url, sizeof(url), "http://%s/ord/pawn/submit", ORDINANCE_SERVER);
+	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
+	if (req == INVALID_HANDLE) return;
+	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
+	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+	SteamWorks_SendHTTPRequest(req);
 }
 
 void makeConfig()
