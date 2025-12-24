@@ -29,7 +29,7 @@
 ## Requirements ##
 - Sourcemod and Metamod
 - sm-json https://github.com/clugg/sm-json
-- SteamWorks https://github.com/KyleSanderson/SteamWorks
+- SteamWorks https://github.com/KyleSanderson/SteamWorks https://users.alliedmods.net/~kyles/builds/SteamWorks/
 ## Installation ##
 1. Grab the latest release from the release page and unzip it in your sourcemod folder.
 2. Restart the server or type `sm plugins load submit_pawn` in the console to load the plugin.

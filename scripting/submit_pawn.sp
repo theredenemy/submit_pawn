@@ -6,7 +6,8 @@
 #pragma newdecls required
 #pragma semicolon 1
 #define PLAYER_PAWN_FILE "player_pawn.txt"
-#define ORDINANCE_SERVER "127.0.0.1:5000"
+#define PAWN_STATE_FILE "pawn_state.txt"
+#define ORDINANCE_SERVER "10.0.0.116:5000"
 char g_playername[MAX_NAME_LENGTH];
 char g_playersteamid[256];
 
@@ -51,7 +52,9 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 void makeConfig()
 {
 	char path[PLATFORM_MAX_PATH];
+	char path2[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
+	BuildPath(Path_SM, path2, sizeof(path2), "configs/%s", PAWN_STATE_FILE);
 	if (!FileExists(path))
 	{
 		PrintToServer(path);
@@ -62,8 +65,40 @@ void makeConfig()
 		kv.ExportToFile(path);
 		delete kv;
 	}
+	if (!FileExists(path2))
+	{
+		KeyValues kv = new KeyValues("Pawn_state");
+		kv.SetString("state", "alive");
+		kv.Rewind();
+		kv.ExportToFile(path2);
+		delete kv;
+	}
 }
+public void set_pawn_state(const char[] state, bool senddata)
+{
+	char path[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PAWN_STATE_FILE);
+	KeyValues kv = new KeyValues("Pawn_state");
+	kv.SetString("state", state);
+	kv.Rewind();
+	kv.ExportToFile(path);
+	delete kv;
+	if (senddata == true)
+	{
+		char output[1024];
+		char url[256];
+		JSON_Object obj = new JSON_Object();
+		obj.SetString("state", state);
+		obj.Encode(output, sizeof(output));
+		Format(url, sizeof(url), "http://%s/ord/pawn/state", ORDINANCE_SERVER);
+		Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
+		if (req == INVALID_HANDLE) return;
+		SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
+		SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+		SteamWorks_SendHTTPRequest(req);
+	}
 
+}
 public void set_pawn(const char[] player, const char[] date)
 {
 	char path[PLATFORM_MAX_PATH];
@@ -74,6 +109,7 @@ public void set_pawn(const char[] player, const char[] date)
 	kv.Rewind();
 	kv.ExportToFile(path);
 	delete kv;
+	set_pawn_state("alive", true);
 }
 
 public void OnPluginStart()
@@ -105,6 +141,12 @@ public void OnTriggerHurt(const char[] output, int caller, int activator, float 
 public void OnMapStart()
 {
 	clearVars();
+	char mapname[128];
+	GetCurrentMap(mapname, sizeof(mapname));
+	if (StrEqual(mapname, "ord_error"))
+	{
+		set_pawn_state("dead", false);
+	}
 	HookEntityOutput("trigger_hurt", "OnHurtPlayer", OnTriggerHurt);
 }
 
