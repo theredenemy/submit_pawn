@@ -18,7 +18,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.0",
+	version = "1.3.1",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -46,6 +46,7 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 	if (req == INVALID_HANDLE) return;
 	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
 }
 
@@ -74,6 +75,12 @@ void makeConfig()
 		delete kv;
 	}
 }
+public int OnHTTPResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+{
+	CloseHandle(req);
+	PrintToServer("Close Handle");
+	return 0;
+}
 public void set_pawn_state(const char[] state, bool senddata)
 {
 	char path[PLATFORM_MAX_PATH];
@@ -95,6 +102,7 @@ public void set_pawn_state(const char[] state, bool senddata)
 		if (req == INVALID_HANDLE) return;
 		SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
 		SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+		SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 		SteamWorks_SendHTTPRequest(req);
 	}
 
