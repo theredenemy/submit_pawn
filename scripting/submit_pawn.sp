@@ -10,6 +10,7 @@
 #define ORDINANCE_SERVER "10.0.0.116:5000"
 char g_playername[MAX_NAME_LENGTH];
 char g_playersteamid[256];
+bool g_ordserveronline;
 
 ConVar g_triggername;
 ConVar g_autokick;
@@ -18,7 +19,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.1",
+	version = "1.3.2",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -124,6 +125,7 @@ public void OnPluginStart()
 {
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
+	g_ordserveronline = false;
 	HookEvent("teamplay_round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 	RegServerCmd("pawn_submit", pawn_submit_cmd);
@@ -150,15 +152,37 @@ public void OnMapStart()
 {
 	clearVars();
 	char mapname[128];
+	char url[256];
 	GetCurrentMap(mapname, sizeof(mapname));
 	if (StrEqual(mapname, "ord_error"))
 	{
 		set_pawn_state("dead", false);
 	}
 	HookEntityOutput("trigger_hurt", "OnHurtPlayer", OnTriggerHurt);
+	Format(url, sizeof(url), "http://%s", ORDINANCE_SERVER);
+	Handle hRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+	SteamWorks_SetHTTPCallbacks(hRequest, CheckOrdServer);
+	SteamWorks_SendHTTPRequest(hRequest);
 }
 
+public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+{
+	if (bRequestSuccessful && statuscode == k_EHTTPStatusCode200OK)
+	{
+		CloseHandle(hRequest);
+		PrintToServer("Close Handle");
+		g_ordserveronline = true;
+		return 0;
+	}
+	else
+	{
+		CloseHandle(hRequest);
+		PrintToServer("Close Handle");
+		g_ordserveronline = false;
+		return 0;
+	}
 
+}
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 {
 	clearVars();
@@ -184,6 +208,19 @@ public Action pawn_submit_cmd(int args)
 		return Plugin_Handled;
 	}
 	GetCmdArgString(full, sizeof(full));
+	if (!g_ordserveronline)
+		{
+			if (IsMapValid("server_error"))
+			{
+				ForceChangeLevel("server_error", "NO INPUT");
+				return Plugin_Handled;
+			}
+			else
+			{
+				ForceChangeLevel("cp_dustbowl", "NO INPUT");
+				return Plugin_Handled;
+			}
+		}
 	for (int i = 1; i <= args; i++)
 	{
 		
@@ -222,7 +259,15 @@ public Action pawn_check_cmd(int args)
 		PrintToServer("autokick off");
 		return Plugin_Handled;
 	}
+	if (!g_ordserveronline)
+	{
+		return Plugin_Handled;
+	}
 	GetCurrentMap(mapname, sizeof(mapname));
+	if (StrEqual(mapname, "2fort") || StrEqual(mapname, "cp_dustbowl"))
+	{
+		return Plugin_Handled;
+	}
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
 	KeyValues kv = new KeyValues("Player_Pawn");
 
