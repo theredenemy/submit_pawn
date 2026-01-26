@@ -7,7 +7,7 @@
 #pragma semicolon 1
 #define PLAYER_PAWN_FILE "player_pawn.txt"
 #define PAWN_STATE_FILE "pawn_state.txt"
-#define ORDINANCE_SERVER "10.0.0.116:5000"
+#define ORDINANCE_SERVER "10.0.0.100:5000"
 char g_playername[MAX_NAME_LENGTH];
 char g_playersteamid[256];
 bool g_ordserveronline;
@@ -19,7 +19,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.2",
+	version = "1.3.3",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -315,13 +315,22 @@ public Action pawn_check_cmd(int args)
 
 }
 
+public Action SubmitPawnTimer(Handle timer)
+{
+	ForceChangeLevel("submit_pawn", "SUBMIT");
+	return Plugin_Continue;
+}
+
 public Action display_vul_text_cmd(int args)
 {
 	char path[PLATFORM_MAX_PATH];
+	char path2[PLATFORM_MAX_PATH];
 	char pawn_name[MAX_NAME_LENGTH];
 	char date[64];
+	char state[256];
 
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
+	BuildPath(Path_SM, path2, sizeof(path2), "configs/%s", PAWN_STATE_FILE);
 	KeyValues kv = new KeyValues("Player_Pawn");
 
 	if (!kv.ImportFromFile(path))
@@ -345,7 +354,7 @@ public Action display_vul_text_cmd(int args)
 	if (!kv2.ImportFromFile(path))
 	{
 		PrintToServer("NO FILE");
-		delete kv;
+		delete kv2;
 		return Plugin_Handled;
 	}
 
@@ -358,6 +367,30 @@ public Action display_vul_text_cmd(int args)
 	{
 		delete kv2;
 		date = "DECEMBER 31TH 2099";
+	}
+	KeyValues kv3 = new KeyValues("Pawn_state");
+	if (!kv3.ImportFromFile(path2))
+	{
+		PrintToServer("NO FILE");
+		delete kv3;
+		return Plugin_Handled;
+	}
+
+	if (kv3.JumpToKey("state", false))
+	{
+		kv3.GetString(NULL_STRING, state, sizeof(state));
+		delete kv3;
+	}
+	else
+	{
+		delete kv3;
+		state = "alive";
+	}
+	if (StrEqual(state, "dead"))
+	{
+		PrintCenterTextAll("ADMIN: I AM YOU");
+		CreateTimer(20.0, SubmitPawnTimer);
+		return Plugin_Handled;
 	}
 	for (int i = 0; i < strlen(pawn_name); i++)
 	{
