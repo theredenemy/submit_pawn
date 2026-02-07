@@ -1,3 +1,9 @@
 .vscode/
 *.smx
 scripting/include/
+/.venv
+/sourcemod-linux
+/sourcemod-win
+sourcemod-win.zip
+sourcemod-linux.zip
+build_log.txt
