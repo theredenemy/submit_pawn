@@ -14,6 +14,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
+
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -28,6 +29,9 @@ jobs:
     - name: Run Build Script
       run: |
         dir
+        tree
+        git submodule update --init --recursive
+        tree
         cmd /c python.exe build.py --archive
     
     - name: Upload artifacts
