@@ -14,6 +14,7 @@ archive = None
 archive_files = False
 plugins_dir = os.path.join(maindir, "plugins")
 scripting_dir = os.path.join(maindir, "scripting")
+dependencies_dir = os.path.join(maindir, "dependencies")
 
 plugin_name = "submit_pawn"
 
@@ -105,15 +106,18 @@ if not cmd.returncode == 0:
 if archive_files is True:
     archive_dir_name = f"{plugin_name}_archive"
     archive_dir = os.path.join(maindir, archive_dir_name)
+    print(f"Packing Archive : {archive_dir}")
     if os.path.isdir(archive_dir):
         shutil.rmtree(archive_dir)
     os.mkdir(archive_dir)
     shutil.copytree(scripting_dir, os.path.join(archive_dir, "scripting"), dirs_exist_ok=True)
     shutil.copytree(plugins_dir, os.path.join(archive_dir, "plugins"), dirs_exist_ok=True)
+    shutil.copytree(dependencies_dir, os.path.join(archive_dir, "dependencies"), dirs_exist_ok=True)
     download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-windows.zip", os.path.join(archive_dir, "SteamWorks-git132-windows.zip"))
     download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-linux.tar.gz", os.path.join(archive_dir, "SteamWorks-git132-linux.tar.gz"))
     shutil.make_archive(base_name=plugin_name, format="zip", root_dir=maindir, base_dir=archive_dir_name)
     shutil.make_archive(base_name=plugin_name, format="gztar", root_dir=maindir, base_dir=archive_dir_name)
+    print("Done")
 
 sys.exit(0)
 
