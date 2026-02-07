@@ -27,7 +27,7 @@ jobs:
     
     - name: Run Build Script
       run: |
-        python build.py archive
+        python.exe build.py archive
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
