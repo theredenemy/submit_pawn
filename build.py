@@ -37,6 +37,7 @@ SteamWorks = os.path.join(maindir, "dependencies", "SteamWorks", "Pawn", "includ
 script = os.path.join(scripting_dir, "submit_pawn.sp")
 
 if not os.path.isdir(sm_json) or not os.path.isdir(SteamWorks):
+    print("Try Running git submodule update --init --recursive First")
     sys.exit(1)
 print("sm-json :", sm_json)
 print("SteamWorks :", SteamWorks)

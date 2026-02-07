@@ -32,7 +32,7 @@ jobs:
         tree
         git submodule update --init --recursive
         tree
-        cmd /c python.exe build.py --archive
+        python build.py --archive
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
