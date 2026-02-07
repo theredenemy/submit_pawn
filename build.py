@@ -11,12 +11,14 @@ maindir = os.getcwd()
 dir = None
 compiler = None
 archive = None
+archive_files = False
 plugins_dir = os.path.join(maindir, "plugins")
 scripting_dir = os.path.join(maindir, "scripting")
 
-def log_subprocess(pipe):
-    for line in iter(pipe.readline, b''):
-        print(">", line)
+plugin_name = "submit_pawn"
+
+if "archive" in sys.argv:
+    archive_files = True
 
 
 
@@ -98,8 +100,22 @@ print(cmd.returncode)
 if not cmd.returncode == 0:
     print("Failed Complie")
     sys.exit(1)
-else:
-    sys.exit(0)
+
+if archive_files is True:
+    archive_dir_name = f"{plugin_name}_archive"
+    archive_dir = os.path.join(maindir, archive_dir_name)
+    if os.path.isdir(archive_dir):
+        shutil.rmtree(archive_dir)
+    os.mkdir(archive_dir)
+    shutil.copytree(scripting_dir, os.path.join(archive_dir, "scripting"), dirs_exist_ok=True)
+    shutil.copytree(plugins_dir, os.path.join(archive_dir, "plugins"), dirs_exist_ok=True)
+    download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-windows.zip", os.path.join(archive_dir, "SteamWorks-git132-windows.zip"))
+    download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-linux.tar.gz", os.path.join(archive_dir, "SteamWorks-git132-linux.tar.gz"))
+    shutil.make_archive(base_name=plugin_name, format="zip", root_dir=maindir, base_dir=archive_dir_name)
+    shutil.make_archive(base_name=plugin_name, format="gztar", root_dir=maindir, base_dir=archive_dir_name)
+
+sys.exit(0)
+
 
 
 

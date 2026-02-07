@@ -4,6 +4,9 @@ scripting/include/
 /.venv
 /sourcemod-linux
 /sourcemod-win
+/submit_pawn_archive
 sourcemod-win.zip
 sourcemod-linux.zip
 build_log.txt
+submit_pawn.tar.gz
+submit_pawn.zip

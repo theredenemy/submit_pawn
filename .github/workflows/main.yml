@@ -1,0 +1,49 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.14'
+    
+    - name: Install Build Script dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r build_requirements.txt
+    
+    - name: Run Build Script
+      run: |
+        python build.py archive
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: submit-pawn
+        path: |
+          submit_pawn.zip
+          submit_pawn.tar.gz
+          submit_pawn_archive/
+    
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/v')
+      with:
+        files: |
+          submit_pawn.zip
+          submit_pawn.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
