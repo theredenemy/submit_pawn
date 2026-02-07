@@ -17,7 +17,7 @@ scripting_dir = os.path.join(maindir, "scripting")
 
 plugin_name = "submit_pawn"
 
-if "archive" in sys.argv:
+if "--archive" in sys.argv:
     archive_files = True
 
 
