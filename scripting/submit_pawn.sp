@@ -19,7 +19,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.3",
+	version = "1.3.4",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -328,6 +328,11 @@ public Action display_vul_text_cmd(int args)
 	char pawn_name[MAX_NAME_LENGTH];
 	char date[64];
 	char state[256];
+
+	if (!g_ordserveronline) {
+		PrintHintTextToAll("ADMIN: ORDINANCE SERVER NOT ONLINE PLEASE TRY AGAIN LATER");
+		return Plugin_Handled;
+	}
 
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
 	BuildPath(Path_SM, path2, sizeof(path2), "configs/%s", PAWN_STATE_FILE);
