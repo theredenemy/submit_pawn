@@ -31,8 +31,8 @@
 - sm-json https://github.com/clugg/sm-json
 - SteamWorks https://github.com/KyleSanderson/SteamWorks https://users.alliedmods.net/~kyles/builds/SteamWorks/
 ## Installation ##
-- After Version 1.2.2 Submit pawn is no longer compiled automatically by Github Actions and must be manually compiled due to includes like SteamWorks-(Requires Extension on Server) and sm-json.
-1. Grab the latest release from the release page and unzip it in your sourcemod folder.
+1. Grab the latest release from the release page and unzip the file copy the plugins folder into your sourcemod folder.
+2. Install SteamWorks Extension on your Server
 2. Restart the server or type `sm plugins load submit_pawn` in the console to load the plugin.
 
 
