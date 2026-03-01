@@ -19,7 +19,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.4",
+	version = "1.3.5",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -37,7 +37,7 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 	char url[256];
 	JSON_Object obj = new JSON_Object();
 	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
-	PrintHintTextToAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
+	PrintToChatAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
 	obj.SetString("player", player);
 	obj.SetInt("timestamp", timestamp);
 	obj.SetString("trigger", trigger);
@@ -193,6 +193,12 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 	ServerCommand("pawn_check");
 	return Plugin_Continue;
 }
+public Action SubmitPawnTimer(Handle timer)
+{
+	ForceChangeLevel("submit_pawn", "SUBMIT");
+	return Plugin_Continue;
+}
+
 public Action pawn_submit_cmd(int args)
 {
 	char arg[256];
@@ -243,6 +249,7 @@ public Action pawn_submit_cmd(int args)
 	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	set_pawn(g_playername, date);
 	SendData(g_playername, triggername, timestamp);
+	PrintHintTextToAll("ADMIN: CALCULATING");
 
 	return Plugin_Handled;
 }
@@ -315,11 +322,7 @@ public Action pawn_check_cmd(int args)
 
 }
 
-public Action SubmitPawnTimer(Handle timer)
-{
-	ForceChangeLevel("submit_pawn", "SUBMIT");
-	return Plugin_Continue;
-}
+
 
 public Action display_vul_text_cmd(int args)
 {
