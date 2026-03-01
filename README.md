@@ -1,3 +1,4 @@
+# MOVED TO https://github.com/theredenemy/ordinance
 <div align="center">
   <h1><code>submit_pawn</code></h1>
   <p>
