@@ -11,6 +11,7 @@
 char g_playername[MAX_NAME_LENGTH];
 char g_playersteamid[256];
 bool g_ordserveronline;
+bool g_hit_vul_door;
 
 ConVar g_triggername;
 ConVar g_autokick;
@@ -19,7 +20,7 @@ public Plugin myinfo =
 	name = "submit_pawn",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.3.5",
+	version = "1.3.6",
 	url = "https://github.com/theredenemy/submit_pawn"
 };
 
@@ -153,6 +154,7 @@ public void OnMapStart()
 	clearVars();
 	char mapname[128];
 	char url[256];
+	g_hit_vul_door = false;
 	GetCurrentMap(mapname, sizeof(mapname));
 	if (StrEqual(mapname, "ord_error"))
 	{
@@ -397,7 +399,12 @@ public Action display_vul_text_cmd(int args)
 	if (StrEqual(state, "dead"))
 	{
 		PrintCenterTextAll("ADMIN: I AM YOU");
-		CreateTimer(20.0, SubmitPawnTimer);
+		if (!g_hit_vul_door)
+		{
+			g_hit_vul_door = true;
+			CreateTimer(20.0, SubmitPawnTimer);
+		}
+		
 		return Plugin_Handled;
 	}
 	for (int i = 0; i < strlen(pawn_name); i++)
